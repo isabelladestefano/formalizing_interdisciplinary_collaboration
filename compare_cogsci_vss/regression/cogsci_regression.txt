@@ -1,0 +1,27 @@
+> m.logcos.interact <- glm(new_publication ~ prior_publication * logCosTopicSim, data=data.pre2019, family=binomial())
+> summary(m.logcos.interact)
+
+Call:
+glm(formula = new_publication ~ prior_publication * logCosTopicSim, 
+    family = binomial(), data = data.pre2019)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-0.8682  -0.0189  -0.0136  -0.0099   5.3732  
+
+Coefficients:
+                                 Estimate Std. Error z value Pr(>|z|)    
+(Intercept)                      -6.75589    0.04371 -154.57   <2e-16 ***
+prior_publication                 4.59234    0.04861   94.47   <2e-16 ***
+logCosTopicSim                    2.24802    0.05323   42.23   <2e-16 ***
+prior_publication:logCosTopicSim -3.86154    0.15808  -24.43   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 105915  on 14880182  degrees of freedom
+Residual deviance:  64908  on 14880179  degrees of freedom
+AIC: 64916
+
+Number of Fisher Scoring iterations: 12

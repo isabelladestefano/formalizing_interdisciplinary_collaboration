@@ -1,4 +1,5 @@
-setwd("/Users/loey/Desktop/Research/InfluencingCogSci/R/cogsci_analysis")
+# This script takes the raw paper data and parses it into a file called "cogsci_byAuthor.csv" which is used for network analysis 
+
 library(stringr)
 library(dplyr)
 library(tidyr)
@@ -14,7 +15,7 @@ library(sna)
 library(tidytext)
 library(textstem)
 knitr::opts_chunk$set(echo = TRUE)
-df <- read_csv("cogsci_papers.csv", col_types = cols(abstract=col_character()))
+df <- read_csv("cogsci_papers.csv", col_types = cols(abstract=col_character())) #this data set can be downloaded on osf (see README)
 
 glimpse(df)
 
@@ -77,9 +78,9 @@ byAuthor <- bind_rows(byAuthor1, byAuthor2)
 
 
 
-write.csv(byAuthor, "cogsci_byAuthor.csv")
+write.csv(byAuthor, "cogsci_analysis/cogsci_byAuthor.csv")
 
-byAuthor <- read_csv("cogsci_byAuthor.csv")
+byAuthor <- read_csv("cogsci_analysis/cogsci_byAuthor.csv")
 # check suffices
 byAuthor %>%
   filter(word(author,-1) == "Jr") %>%

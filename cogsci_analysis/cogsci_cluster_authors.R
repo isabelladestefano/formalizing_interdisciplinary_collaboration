@@ -1,4 +1,3 @@
-setwd("/Users/loey/Desktop/Research/InfluencingCogSci/R/cogsci_analysis")
 library(tidyverse)
 library(plot3D)
 library(pbapply)

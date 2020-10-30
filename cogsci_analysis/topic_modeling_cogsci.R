@@ -1,3 +1,4 @@
+#Runs the topic model
 library(stm) 
 library(stringr)
 library(dplyr)
@@ -20,7 +21,6 @@ library(forcats)
 library(ggdendro)
 library(seewave) # K-L distance
 
-setwd("/Users/loey/Desktop/Research/InfluencingCogSci/R/cogsci_analysis")
 #source("topic_labels.R")
 
 # Resources:

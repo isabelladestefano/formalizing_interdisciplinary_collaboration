@@ -1,4 +1,3 @@
-setwd("/Users/loey/Desktop/Research/InfluencingCogSci/R/cogsci_analysis")
 library(tidyverse)
 library(lme4)
 library(futile.matrix)

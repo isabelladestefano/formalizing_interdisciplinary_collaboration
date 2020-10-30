@@ -1,5 +1,4 @@
 ### Script / functions for processing topic distributions over a set of papers
-setwd("/Users/loey/Desktop/Research/InfluencingCogSci/R/cogsci_analysis")
 library(tidyverse)
 library(pbapply)
 source('networkCentralityFunctions_cogsci.R')

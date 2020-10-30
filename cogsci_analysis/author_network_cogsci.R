@@ -1,53 +1,25 @@
-setwd("/Users/loey/Desktop/Research/InfluencingCogSci/R/cogsci_analysis")
+#this script will make the co-authorship network for all years from 2000 - 2019 as well as network including full data set. It also calculates centrality measures.
+
 library(tidyverse)
 library(igraph)
-byAuthor <- read_csv("cogsci_byAuthor.csv") %>%
+source('author_network_edge_extract.R')
+#source('cogsci_analysis.R') # this will make the cogsci_byAuthor csv from the raw paper data that you can download on OSF
+
+byAuthor <- read_csv("cogsci_analysis/cogsci_byAuthor.csv") %>%
   distinct() %>%
   mutate(authorAbbr=ifelse(authorAbbr=="J Tenenbaums", "J Tenenbaum", authorAbbr))
 
-#Need to run Lauren's script before running this one.
-
-#helper functions
-getEdges = function(x){
-  from = c()
-  to = c()
-  for(i in 1:length(x)){
-    for(j in 1:length(x)){
-      if(i!=j && i>j){
-        from=c(from, x[i])
-        to = c(to,x[j])
-      }
-    }
-  }
-  return(data.frame(from=from,to=to))
-}
-
-edgeList = function(author_net,uniqueEdges = T){
-  edges = data.frame(from = c(),to =c())
-  for(k in unique(author_net$title)){
-    temp = author_net %>% filter(title == k)
-    if(length(temp$authorAbbr) == 1){
-      edges_itt = data.frame(from = temp$authorAbbr,to = temp$authorAbbr)
-    }
-    else{
-      edges_itt = getEdges(temp$authorAbbr)
-    }
-    edges = rbind(edges,edges_itt)
-    print(paste0(which(unique(author_net$title) == k), ' out of ', length(unique(author_net$title))))
-  }
-  if(uniqueEdges && length(edges!=0)){
-    edges = edges[!duplicated(apply(edges,1,function(x) paste(sort(x),collapse=''))),]
-  }
-  return(edges)
-}
-
 
 ##Author network data
-#Some authors are not connected to the main part of the network. This happens when they have one publication/other reasons. This is bad for measuring certain kinds of centrality because they depend on paths and loops through the network. Taking the most published authors is expedient, but a more sophisticated means should be considered.  Additionally our graph is not simple because there are multiple connections between authors, if we select unique connections the network will be more amenable (including the removeDuplicates function in getEdges will do this). 
+#Some authors are not connected to the main part of the network. 
+#This happens when they have one publication/other reasons. 
+#This is bad for measuring certain kinds of centrality because they depend on paths and loops through the network. 
+#Taking the most published authors is expedient, but a more sophisticated means should be considered.  
+#Additionally our graph is not simple because there are multiple connections between authors, 
+#if we select unique connections the network will be more amenable (including the removeDuplicates function in getEdges will do this). 
 
 #includes all authors
 author_net = byAuthor %>% select(title,authorAbbr,year) %>% unique()
-author_net
 
 #removes authors with <n publications
 # n.pubs=5
@@ -66,24 +38,24 @@ author_net
 ##Author Network
 #nodes and edges
 
-#Creating an edge list to be used with igraph (for calculating centrality) and visNetwork (fun visualization compatable with shiny for writing interactive app).
-
 #visNetwork version of nodes and edges
+#do not run this line with full author_net set it will take HOURS load csv 'all_edges.csv' instead
 all_nodes = unique(author_net$authorAbbr) 
-all_edges = edgeList(author_net%>%select(title,authorAbbr)) #do not run this line with full author_net set it will take HOURS load csv 'all_edges.csv' instead
-length(all_nodes)
-write.csv(all_nodes, "cogsci_networkByYear/nodes_all.csv")
-nrow(all_edges)
-write.csv(all_edges, "cogsci_networkByYear/edges_all.csv")
-
+all_edges = edgeList(author_net%>%select(title,authorAbbr))
+#length(all_nodes)
+#write.csv(all_nodes, "cogsci_networkByYear/nodes_all.csv")
+#nrow(all_edges)
+#write.csv(all_edges, "cogsci_networkByYear/edges_all.csv")
+#all_nodes = read_csv("cogsci_analysis/cogsci_networkByYear/nodes_all.csv")
+#all_edges =read_csv("cogsci_analysis/cogsci_networkByYear/edges_all.csv")
 
 for(j in unique(author_net$year)){
   author_net_year = author_net %>% filter(year == j) %>% select(title, authorAbbr)
   year_nodes= unique(author_net_year$authorAbbr)
   year_edges = edgeList(author_net_year)
   year_nodes=data.frame(id = 1:length(year_nodes), label = year_nodes)
-  write.csv(year_nodes, paste0('cogsci_networkByYear/nodes_',j,'.csv'))
-  write.csv(year_edges, paste0('cogsci_networkByYear/edges_',j,'.csv'))
+  write.csv(year_nodes, paste0('cogsci_analysis/cogsci_networkByYear/nodes_',j,'.csv'))
+  write.csv(year_edges, paste0('cogsci_analysis/cogsci_networkByYear/edges_',j,'.csv'))
   
   year_edges = apply(year_edges, MARGIN = c(1,2), function(x){return(which(year_nodes[2] == x))})
   year_edges = data.frame(year_edges)
@@ -114,7 +86,7 @@ for(j in unique(author_net$year)){
                                  rep('between', length(year_nodes$id)),
                                  rep('eigen', length(year_nodes$id))))
   
-  write.csv(centrality, paste0('cogsci_networkByYear/centrality_',j,'.csv'))
+  write.csv(centrality, paste0('cogsci_analysis/cogsci_networkByYear/centrality_',j,'.csv'))
   
 }
 
@@ -155,7 +127,7 @@ all_centrality = data.frame(id = rep(all_nodes$id,4),
                                rep('close', length(all_nodes$id)), 
                                rep('between', length(all_nodes$id)),
                                rep('eigen', length(all_nodes$id))))
-write.csv(all_centrality, 'networkByYear/centrality_all.csv')
+write.csv(all_centrality, 'cogsci_analysis/cogsci_networkByYear/centrality_all.csv')
 
 #Space I was using to explore centrality.
 
